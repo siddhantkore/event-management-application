@@ -1,0 +1,2 @@
+Use the service files if the business logic is too much for controller
+Keep Controller clean and with minimum code
