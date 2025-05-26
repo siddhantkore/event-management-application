@@ -1,0 +1,17 @@
+Do It
+
+write and configure Dockerfile and docker-compose.yml
+see Jenkinsfile once again to set it up
+configure and confirm routes endpoints
+trim and confirm models for our best use - remove unnecessory and too complex things
+
+
+*****
+confirm frontend data requirements (Objects)
+final pages and views
+
+
+
+**last**
+
+see things required for production & deployment
