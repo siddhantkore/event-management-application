@@ -12,21 +12,26 @@ pipeline {
     stages {
 
         stage ('Checkout Code') {
-            echo "Checking out code...."
-            checkout scm
-
+            steps {
+                echo "Checking out code...."
+                checkout scm
+            }
         }
 
         stage ('Install Dependencies') {
-            echo "Installing Dependencies..."
-            sh 'npm install'
+            steps{
+                echo "Installing Dependencies..."
+                sh 'npm install'
+            }
         }
 
         // development branch
         stage ('Built In Development') {
-            echo "Building in Development"
-            // sh 'npm run dev'
-            sh 'docker-compose up --build -d'
+            steps {
+                echo "Building in Development"
+                // sh 'npm run dev'
+                sh 'docker-compose up --build -d'
+            }
         }
 
 // Production and deployment will be configured lator
