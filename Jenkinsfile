@@ -14,8 +14,7 @@ pipeline {
         stage ('Checkout Code') {
             echo "Checking out code...."
             checkout scm
-            // Check this again
-            // trigger
+
         }
 
         stage ('Install Dependencies') {
@@ -23,14 +22,22 @@ pipeline {
             sh 'npm install'
         }
 
+        // development branch
         stage ('Built In Development') {
             echo "Building in Development"
-            sh 'npm run dev'
+            // sh 'npm run dev'
+            sh 'docker-compose up --build -d'
         }
 
+// Production and deployment will be configured lator
         stage ('Build in Production') {
-            echo "Building in Production"
-            sh 'npm start'
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "Building in Production"
+                sh 'npm start'
+            }
         }
 
         stage ('Deploy Application') {
@@ -39,7 +46,7 @@ pipeline {
             }
             steps {
                 echo "Deploying the appplication"
-                // Deployment logic will be configut=red lator  
+                // Deployment logic will be configured lator  
             }
         }
 

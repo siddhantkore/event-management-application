@@ -4,6 +4,8 @@ const path = require('path');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const pino = require('pino-http')();
+
 
 const healthRoute = require('./routes/healthRoute');
 const eventRoute = require('./routes/eventRoute');
@@ -14,7 +16,9 @@ const app = express();
 // Middlewares
 // app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
+app.use(pino);
+
 // Security middleware
 app.use(helmet());
 app.use(cors({
@@ -40,7 +44,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', (req, res, next) => {
   res.status(200).sendFile(path.join(__dirname, 'views', 'demohome.html'));
 });
-app.use('/api/v1/health', healthRoute);
+app.use('/api/health', healthRoute);
 app.use('/api/payments', require('./routes/paymentRoute'));
 app.use('/api/reports', require('./routes/reportRoute'));
 app.use('/api/coupons', require('./routes/couponRoute'));
