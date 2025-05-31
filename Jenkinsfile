@@ -59,9 +59,38 @@ pipeline {
     post {
         success {
             echo "Build COMPLETED Successfully !!!!"
+            script {
+                emailext (
+                    to: 'megastorage2112@gmail.com, kore7447@gmail.com',
+                    subject: "Jenkins Build Success: ${env.JOB_NAME} - #${env.BUILD_NUMBER}",
+                    body: """
+                        <p>Build ${env.JOB_NAME} - #${env.BUILD_NUMBER} is SUCCESSFUL!</p>
+                        <p>Branch: ${env.BRANCH_NAME}</p>
+                        <p>Console Output: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+                        <p>Changes:</p>
+                        ${TOKEN_MACRO_CHANGES_SINCE_LAST_SUCCESS}
+                    """,
+                    mimeType: 'text/html'
+                )
+            }
         }
         failure {
             echo "Build FAILED :("
+            script {
+                emailext (
+                    to: 'megastorage2112@gmail.com, kore7447@gmail.com',
+                    subject: "Jenkins Build FAILURE: ${env.JOB_NAME} - #${env.BUILD_NUMBER}",
+                    body: """
+                        <p style="color:red">Build ${env.JOB_NAME} - #${env.BUILD_NUMBER} has FAILED!</p>
+                        <p>Branch: ${env.BRANCH_NAME}</p>
+                        <p>Console Output: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+                        <p>Check the build logs for details.</p>
+                        <p>Changes:</p>
+                        ${TOKEN_MACRO_CHANGES_SINCE_LAST_FAILURE}
+                    """,
+                    mimeType: 'text/html'
+                )
+            }
         }
     }
 
