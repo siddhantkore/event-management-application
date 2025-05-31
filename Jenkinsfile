@@ -67,6 +67,9 @@ pipeline {
                         <p>Build ${env.JOB_NAME} - #${env.BUILD_NUMBER} is SUCCESSFUL!</p>
                         <p>Branch: ${env.BRANCH_NAME}</p>
                         <p>Console Output: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
+                        <p>Changes:</p>
+                        ${TOKEN_MACRO_CHANGES_SINCE_LAST_SUCCESS}
+>>>>>>>>> Temporary merge branch 2
                     """,
                     mimeType: 'text/html'
                 )
@@ -83,6 +86,12 @@ pipeline {
                         <p>Branch: ${env.BRANCH_NAME}</p>
                         <p>Console Output: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
                         <p>Check the build logs for details.</p>
+                        <p>Changes:</p>
+<<<<<<<<< Temporary merge branch 1
+                        ${CHANGES_SINCE_LAST_FAILURE}
+=========
+                        ${TOKEN_MACRO_CHANGES_SINCE_LAST_FAILURE}
+>>>>>>>>> Temporary merge branch 2
                     """,
                     mimeType: 'text/html'
                 )
