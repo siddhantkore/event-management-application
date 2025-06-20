@@ -76,106 +76,15 @@ const userSchema = new mongoose.Schema({
     },
     default: 'PARTICIPANT'
   },
-  profile: {
-    dateOfBirth: Date,
-    gender: {
-      type: String,
-      enum: ['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']
-    },
-    bio: {
-      type: String,
-      maxlength: [500, 'Bio cannot exceed 500 characters']
-    },
-    profilePicture: String,
-    socialMedia: {
-      linkedin: String,
-      twitter: String,
-      github: String
-    }
-  },
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String
-  },
-  preferences: {
-    emailNotifications: {
-      type: Boolean,
-      default: true
-    },
-    smsNotifications: {
-      type: Boolean,
-      default: false
-    },
-    preferredEventTypes: [{
-      type: String
-    }]
-  },
-  verification: {
-    email: {
-      verified: {
-        type: Boolean,
-        default: false
-      },
-      verificationToken: String,
-      verifiedAt: Date
-    },
-    phone: {
-      verified: {
-        type: Boolean,
-        default: false
-      },
-      verificationCode: String,
-      verifiedAt: Date
-    }
-  },
-  security: {
-    lastLogin: Date,
-    loginAttempts: {
-      type: Number,
-      default: 0
-    },
-    lockUntil: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-    twoFactorEnabled: {
-      type: Boolean,
-      default: false
-    }
-  },
   isActive: {
     type: Boolean,
     default: true
-  },
-  isBlocked: {
-    type: Boolean,
-    default: false
   }
-}, {
-  timestamps: true,
-  toJSON: { 
-    virtuals: true,
-    transform: function(doc, ret) {
-      delete ret.password;
-      delete ret.security.passwordResetToken;
-      delete ret.security.passwordResetExpires;
-      delete ret.verification.verificationToken;
-      delete ret.verification.phone.verificationCode;
-      return ret;
-    }
-  },
-  toObject: { virtuals: true }
+  
 });
-
 // Virtual for full name
 userSchema.virtual('fullName').get(function() {
   return `${this.name.firstName} ${this.name.lastName}`;
-});
-
-// Virtual to check if account is locked
-userSchema.virtual('isLocked').get(function() {
-  return !!(this.security.lockUntil && this.security.lockUntil > Date.now());
 });
 
 // Indexes
@@ -195,37 +104,6 @@ userSchema.pre('save', async function(next) {
 // Method to compare passwords
 userSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
-};
-
-// Method to increment login attempts
-userSchema.methods.incLoginAttempts = function() {
-  // If we have a previous lock that has expired, restart at 1
-  if (this.security.lockUntil && this.security.lockUntil < Date.now()) {
-    return this.updateOne({
-      $unset: { 'security.lockUntil': 1 },
-      $set: { 'security.loginAttempts': 1 }
-    });
-  }
-  
-  const updates = { $inc: { 'security.loginAttempts': 1 } };
-  
-  // Lock account after 5 failed attempts for 2 hours
-  if (this.security.loginAttempts + 1 >= 10 && !this.isLocked) {
-    updates.$set = { 'security.lockUntil': Date.now() + 2 * 60 * 60 * 1000 };
-  }
-  
-  return this.updateOne(updates);
-};
-
-// Method to reset login attempts
-userSchema.methods.resetLoginAttempts = function() {
-  return this.updateOne({
-    $unset: { 
-      'security.loginAttempts': 1,
-      'security.lockUntil': 1 
-    },
-    $set: { 'security.lastLogin': Date.now() }
-  });
 };
 
 const User = mongoose.model('User', userSchema);

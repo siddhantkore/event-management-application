@@ -13,18 +13,6 @@ const registerSchema = new mongoose.Schema({
     ref: 'User',
     required: [true, 'User ID is required']
   },
-  transactionId: {
-    type: String,
-    trim: true,
-    sparse: true, // Allows multiple null values for free events
-    validate: {
-      validator: function(value) {
-        if (!value) return true; // Optional for free events
-        return /^[A-Za-z0-9]{10,50}$/.test(value);
-      },
-      message: 'Transaction ID must be alphanumeric and 10-50 characters long'
-    }
-  },
   registrationDate: {
     type: Date,
     default: Date.now,
@@ -54,11 +42,6 @@ const registerSchema = new mongoose.Schema({
     type: Number,
     min: [0, 'Amount paid cannot be negative'],
     default: 0
-  },
-  paymentMethod: {
-    type: String,
-    enum: ['CREDIT_CARD', 'DEBIT_CARD', 'UPI', 'NET_BANKING', 'WALLET', 'CASH', 'FREE'],
-    default: 'FREE'
   },
   additionalInfo: {
     dietaryRestrictions: String,

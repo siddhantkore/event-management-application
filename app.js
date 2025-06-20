@@ -47,7 +47,6 @@ app.use('/', (req, res, next) => {
 app.use('/api/health', healthRoute);
 app.use('/api/payments', require('./routes/paymentRoute'));
 app.use('/api/reports', require('./routes/reportRoute'));
-app.use('/api/coupons', require('./routes/couponRoute'));
 app.use('/api/analytics', require('./routes/analyticsRoute'));
 
 app.use(globalErrorHandler);
