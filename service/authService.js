@@ -1,7 +1,7 @@
 // authService.js
 const jwt = require('jsonwebtoken');
-const User = require('./userModel');
-const AppError = require('./utils/appError');
+const User = require('../models/userModel');
+const AppError = require('../utils/AppError');
 
 // Environment variables
 const JWT_SECRET = process.env.JWT_SECRET || 'your_strong_secret_here';

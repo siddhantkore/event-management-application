@@ -1,14 +1,8 @@
 // authController.js
-const jwt = require('jsonwebtoken');
-const User = require('./userModel');
-const authService = require('./authService');
-const AppError = require('../utils/appError');
+const User = require('../models/userModel');
+const authService = require('../service/authService');
+const AppError = require('../utils/AppError');
 const catchAsync = require('../utils/catchAsync');
-
-// Environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'your_strong_secret_here';
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
-const COOKIE_EXPIRES = process.env.COOKIE_EXPIRES || 1;
 
 /**
  * @desc    Register new user

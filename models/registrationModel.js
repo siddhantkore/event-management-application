@@ -55,9 +55,7 @@ const registerSchema = new mongoose.Schema({
     type: String,
     enum: ['REGISTERED', 'ATTENDED', 'NO_SHOW'],
     default: 'REGISTERED'
-  },
-  checkInTime: Date,
-  checkOutTime: Date
+  }
 }, {
   timestamps: true
 });

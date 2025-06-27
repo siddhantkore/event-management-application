@@ -2,6 +2,12 @@ const Event = require('../models/eventModel')
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 
+/**
+ * keep limited initially
+ *     Configure and remove unnecessory
+ *     Use CI-CD then for improvement after initial deployment
+ * 
+ */
 
 
 // Add Pagination here
@@ -51,7 +57,7 @@ exports.deleteEventByCode = catchAsync(async(req,res,next) => {
 });
 
 
-exports.addEvent = catchAsync(async(req, res, next) => {
+exports.createEvent = catchAsync(async(req, res, next) => {
     const newEvent=null // get event Doc from req;
     const addedEvent = await Event.insertOne(newEvent);
 
@@ -62,4 +68,59 @@ exports.addEvent = catchAsync(async(req, res, next) => {
         status: "success"
     });
     
+});
+
+exports.getFeaturedEvents = catchAsync(async (req, res, next) => {
+
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+
+});
+exports.searchEvents = catchAsync(async (req, res, next) => {
+
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+
+});
+exports.getEventsByCategory = catchAsync(async (req, res, next) => {
+
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+
+});
+exports.uploadEventImage = catchAsync(async (req, res, next) => {
+
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+
+});
+exports.getEventAttendees = catchAsync(async (req, res, next) => {
+
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+
+});
+
+exports.updateEventStatus = catchAsync(async (req, res, next) => {
+    
+    
+    res.status(200).json({
+        status:'success',
+        data: Data
+    })
+});
+
+exports.updateEventByCode = catchAsync(async (req, res, next) => {
+
+
 });

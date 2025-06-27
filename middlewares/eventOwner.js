@@ -2,3 +2,6 @@
 const eventOwnerMiddleware = async (req, res, next) => {
   // Logic to verify event ownership
 };
+
+
+module.exports = eventOwnerMiddleware;

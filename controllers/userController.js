@@ -5,13 +5,9 @@
 // getUserById() - Admin: Get user by ID
 // updateUserStatus() - Admin: Activate/deactivate user
 // deleteUser() - Admin: Delete user
-const User = require('../models/User');
+const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
-
-// Helper function to handle async errors
-const asyncHandler = (fn) => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
-};
+const catchAsync = require('../utils/catchAsync')
 
 // Helper function to send error response
 const sendErrorResponse = (res, statusCode, message) => {
@@ -40,7 +36,7 @@ const sendSuccessResponse = (res, statusCode, message, data = null) => {
 // @desc    Get current user profile
 // @route   GET /api/users/profile
 // @access  Private
-const getProfile = asyncHandler(async (req, res) => {
+const getProfile = catchAsync(async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     
@@ -71,7 +67,7 @@ const getProfile = asyncHandler(async (req, res) => {
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
-const updateProfile = asyncHandler(async (req, res) => {
+const updateProfile = catchAsync(async (req, res) => {
   try {
     const { firstName, lastName, phone, currentPassword, newPassword } = req.body;
     
@@ -140,7 +136,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 // @desc    Delete user account (self-deletion)
 // @route   DELETE /api/users/profile
 // @access  Private
-const deleteProfile = asyncHandler(async (req, res) => {
+const deleteProfile = catchAsync(async (req, res) => {
   try {
     const { password } = req.body;
     
@@ -172,7 +168,7 @@ const deleteProfile = asyncHandler(async (req, res) => {
 // @desc    Get all users (Admin only)
 // @route   GET /api/users
 // @access  Private/Admin
-const getAllUsers = asyncHandler(async (req, res) => {
+const getAllUsers = catchAsync(async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -236,7 +232,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 // @desc    Get user by ID (Admin only)
 // @route   GET /api/users/:id
 // @access  Private/Admin
-const getUserById = asyncHandler(async (req, res) => {
+const getUserById = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -273,7 +269,7 @@ const getUserById = asyncHandler(async (req, res) => {
 // @desc    Update user status (Admin only)
 // @route   PATCH /api/users/:id/status
 // @access  Private/Admin
-const updateUserStatus = asyncHandler(async (req, res) => {
+const updateUserStatus = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
     const { isActive, role } = req.body;
@@ -298,7 +294,7 @@ const updateUserStatus = asyncHandler(async (req, res) => {
       user.isActive = isActive;
     }
 
-    if (role && ['ADMIN', 'ORGANIZER', 'PARTICIPANT', 'JUDGE', 'VOLUNTEER'].includes(role)) {
+    if (role && ['ADMIN', 'ORGANIZER', 'PARTICIPANT', 'VOLUNTEER'].includes(role)) {
       // Prevent admin from changing their own role to non-admin
       if (req.user.id === id && role !== 'ADMIN') {
         return sendErrorResponse(res, 400, 'You cannot change your own admin role');
@@ -336,7 +332,7 @@ const updateUserStatus = asyncHandler(async (req, res) => {
 // @desc    Delete user (Admin only)
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
-const deleteUser = asyncHandler(async (req, res) => {
+const deleteUser = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
 

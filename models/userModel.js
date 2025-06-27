@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [8, 'Password must be at least 8 characters long'],
+    minlength: [6, 'Password must be at least 8 characters long'],
     validate: {
       validator: function(value) {
         // At least one uppercase, one lowercase, one number, one special character
@@ -71,8 +71,8 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: {
-      values: ['ADMIN', 'ORGANIZER', 'PARTICIPANT', 'JUDGE', 'VOLUNTEER'],
-      message: 'Role must be ADMIN, ORGANIZER, PARTICIPANT, JUDGE, or VOLUNTEER'
+      values: ['ADMIN', 'ORGANIZER', 'PARTICIPANT', 'VOLUNTEER'],
+      message: 'Role must be ADMIN, ORGANIZER, PARTICIPANT, or VOLUNTEER'
     },
     default: 'PARTICIPANT'
   },
@@ -82,6 +82,7 @@ const userSchema = new mongoose.Schema({
   }
   
 });
+
 // Virtual for full name
 userSchema.virtual('fullName').get(function() {
   return `${this.name.firstName} ${this.name.lastName}`;

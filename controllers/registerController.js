@@ -14,3 +14,25 @@ const Register = require('../models/registrationModel')
 // cancelRegistration() - Cancel registration
 // getEventRegistrations() - Get all registrations for an event
 // updateRegistrationStatus() - Update registration status
+
+exports.createRegistration = catchAsync(async () => {
+
+})
+exports.getUserRegistrations = catchAsync(async () => {
+
+})
+exports.getRegistrationById = catchAsync(async () => {
+
+})
+exports.updateRegistration = catchAsync(async () => {
+
+})
+exports.getEventRegistrations = catchAsync(async () => {
+
+})
+exports.updateRegistrationStatus = catchAsync(async () => {
+
+})
+exports.cancelRegistration = catchAsync(async () => {
+
+})

@@ -23,6 +23,10 @@ const eventSchema = new mongoose.Schema({
       message: 'Category must be one of the predefined options'
     }
   },
+  time:{
+    type: String,
+    required: [true, 'Please Provide Event Time']
+  },
   startDate: {
     type: Date,
     required: [true, 'Event must have a start date'],
@@ -113,18 +117,14 @@ const eventSchema = new mongoose.Schema({
   tags: [{
     type: String,
     trim: true
-  }],
-  isPublic: {
-    type: Boolean,
-    default: true
-  }
+  }]
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Indexes for better query performance
+// Indexes
 eventSchema.index({ eventCode: 1 });
 eventSchema.index({ category: 1, status: 1 });
 eventSchema.index({ startDate: 1, endDate: 1 });
