@@ -49,7 +49,7 @@ const logger = pino({
   },
   // File output (for production)
   {
-    level: 'info',
+    level: ['debug','info','warn','error'],
     stream: pino.destination({
       dest: getLogFilePath(),
       sync: false,

@@ -7,9 +7,12 @@ services:
       - "3000:3000"
     environment:
       - MONGO_URI=mongodb://mongo:27017/college_events
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - NODE_ENV=development
     depends_on:
       - mongo
+      - redis
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules  # Prevent overwriting node_modules
@@ -23,6 +26,16 @@ services:
     volumes:
       - mongo-data:/data/db
     restart: always
+  
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
 
 volumes:
   mongo-data:
+  redis-data:

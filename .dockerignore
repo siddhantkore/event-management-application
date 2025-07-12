@@ -1,7 +1,13 @@
 
 node_modules
 Dockerfile
-.dockerignore
+
+
+
+logs
+kubernetes
+Data
+archieve
 
 
 #.env
@@ -10,7 +16,7 @@ Dockerfile
 
 .git
 .gitignore
-
+Jenkinsfile
 
 .vscode
 

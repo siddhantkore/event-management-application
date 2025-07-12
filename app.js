@@ -15,7 +15,7 @@ const userRoute = require('./routes/userRoute');
 const reportRoute = require('./routes/reportRoute');
 const registrationRoute = require('./routes/registrationRoute');
 const paymentRoute = require('./routes/paymentRoute');
-const authRoute = require('./routes/authRoute');
+const authRoute = require('./routes/auth/authRoute');
 const analyticsRoute = require('./routes/analyticsRoute');
 
 
@@ -46,7 +46,20 @@ app.use('/api/', limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/auth',authRoute)
+// keep Admin Routes or admin access at different separate route
+
+// *** ADMIN ***
+
+
+
+// *** USER ***
+
+// /api/admin/reports
+// /api/admin/certificate
+// /api/admin/events creating
+// /api/admin/analytics
+
+app.use('/api/auth',authRoute);
 app.use('/api/health', healthRoute);
 app.use('/api/events',eventRoute);
 app.use('api/user/profile',userRoute);

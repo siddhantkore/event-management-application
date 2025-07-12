@@ -8,30 +8,9 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const catchAsync = require('../utils/catchAsync')
+const sendSuccessResponse = require('../utils/sendSuccessResponse')
+const sendErrorResponse = require('../utils/sendErrorResponse')
 
-// Helper function to send error response
-const sendErrorResponse = (res, statusCode, message) => {
-  return res.status(statusCode).json({
-    success: false,
-    message,
-    timestamp: new Date().toISOString()
-  });
-};
-
-// Helper function to send success response
-const sendSuccessResponse = (res, statusCode, message, data = null) => {
-  const response = {
-    success: true,
-    message,
-    timestamp: new Date().toISOString()
-  };
-  
-  if (data) {
-    response.data = data;
-  }
-  
-  return res.status(statusCode).json(response);
-};
 
 // @desc    Get current user profile
 // @route   GET /api/users/profile
@@ -166,7 +145,7 @@ const deleteProfile = catchAsync(async (req, res) => {
 });
 
 // @desc    Get all users (Admin only)
-// @route   GET /api/users
+// @route   GET /api/admin/users
 // @access  Private/Admin
 const getAllUsers = catchAsync(async (req, res) => {
   try {
@@ -230,7 +209,7 @@ const getAllUsers = catchAsync(async (req, res) => {
 });
 
 // @desc    Get user by ID (Admin only)
-// @route   GET /api/users/:id
+// @route   GET /api/admin/users/:id
 // @access  Private/Admin
 const getUserById = catchAsync(async (req, res) => {
   try {
@@ -267,7 +246,7 @@ const getUserById = catchAsync(async (req, res) => {
 });
 
 // @desc    Update user status (Admin only)
-// @route   PATCH /api/users/:id/status
+// @route   PATCH /api/admin/users/:id/status
 // @access  Private/Admin
 const updateUserStatus = catchAsync(async (req, res) => {
   try {
@@ -330,7 +309,7 @@ const updateUserStatus = catchAsync(async (req, res) => {
 });
 
 // @desc    Delete user (Admin only)
-// @route   DELETE /api/users/:id
+// @route   DELETE /api/admin/users/:id
 // @access  Private/Admin
 const deleteUser = catchAsync(async (req, res) => {
   try {

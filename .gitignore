@@ -3,3 +3,12 @@ env
 Data
 archieve
 logs
+kubernetes
+#cache
+
+
+to-do.txt
+arch.png
+.sample.env
+
+.vscode

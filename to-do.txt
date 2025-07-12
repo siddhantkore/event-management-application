@@ -1,9 +1,31 @@
 Do It
 
-write and configure Dockerfile and docker-compose.yml
-see Jenkinsfile once again to set it up
+write and configure Dockerfile and docker-compose.yml - done
+see Jenkinsfile once again to set it up - done
 configure and confirm routes endpoints
-trim and confirm models for our best use - remove unnecessory and too complex things
+trim and confirm models for our best use - remove unnecessory and too complex things - done
+
+
+******
+set single point of access - i.e Only accesscible to a particular IP - Frontend
+deployment at local kubernetes cluster
+find all api endpoints =
+    Admin - ( No booking etc Visible)
+        GET /api/admin/users
+        GET /api/admin/users/:id
+        PATCH /api/admin/users/:id/status
+        DELETE /api/admin/users/:id
+
+
+         GET /api/admin/events/registrations
+        
+    User -
+        GET /api/users/profile
+        PUT /api/users/profile
+        DELETE /api/users/profile
+
+
+        POST /api/users/events/:id
 
 
 *****
