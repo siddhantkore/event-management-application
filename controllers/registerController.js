@@ -15,9 +15,12 @@ const Register = require('../models/registrationModel')
 // getEventRegistrations() - Get all registrations for an event
 // updateRegistrationStatus() - Update registration status
 
-// @desc    register for an event
-// @route   POST /api/users/events/:id
-// @access  Private
+/**
+ * @desc    register for an event
+ * @route   POST /api/users/events/:id
+ * @access  Private
+ * 
+ */
 exports.createRegistration = catchAsync(async (req, res, next) => {
     const { eventDate, additionalInfo } = req.body;
     const userId = req.user.id; // assuming auth middleware sets req.user
@@ -38,10 +41,12 @@ exports.createRegistration = catchAsync(async (req, res, next) => {
     });
 });
 
-
-// @desc    Get all registered user of a event
-// @route   GET /api/admin/events/registrations
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered user of a event
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
 exports.getUserRegistrations = catchAsync(async (req, res, next) => {
     const userId = req.user.id;
 
@@ -57,9 +62,12 @@ exports.getUserRegistrations = catchAsync(async (req, res, next) => {
     });
 });
 
-// @desc    Get all registered user of a event
-// @route   GET /api/admin/events/registrations
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered user of a event
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
 exports.getRegistrationById = catchAsync(async (req, res, next) => {
     const registration = await Register.findById(req.params.id)
         .populate('eventId')
@@ -77,10 +85,12 @@ exports.getRegistrationById = catchAsync(async (req, res, next) => {
     });
 });
 
-
-// @desc    Get all registered users of a event and edit
-// @route   GET /api/admin/events/registrations/:id
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered users of a event and edit
+ * @route   GET /api/admin/events/registrations/:id
+ * @access  Private/Admin Only
+ * 
+ */
 exports.updateRegistration = catchAsync(async (req, res, next) => {
     const updatedRegistration = await Register.findByIdAndUpdate(
         req.params.id,
@@ -102,10 +112,12 @@ exports.updateRegistration = catchAsync(async (req, res, next) => {
     });
 });
 
-
-// @desc    Get all registered user of a event
-// @route   GET /api/admin/events/registrations
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered user of a event
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
 exports.getEventRegistrations = catchAsync(async (req, res, next) => {
     const registrations = await Register.find({ eventId: req.params.id })
         .populate('userId');
@@ -119,10 +131,12 @@ exports.getEventRegistrations = catchAsync(async (req, res, next) => {
     });
 });
 
-
-// @desc    Get all registered user of a event
-// @route   GET /api/admin/events/registrations
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered user of a event
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
 exports.updateRegistrationStatus = catchAsync(async (req, res, next) => {
     const { registrationStatus } = req.body;
 
@@ -144,10 +158,12 @@ exports.updateRegistrationStatus = catchAsync(async (req, res, next) => {
     });
 });
 
-
-// @desc    Get all registered user of a event
-// @route   GET /api/admin/events/registrations
-// @access  Private/Admin Only
+/**
+ * @desc    Get all registered user of a event
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
 exports.cancelRegistration = catchAsync(async (req, res, next) => {
     const userId = req.user.id;
 

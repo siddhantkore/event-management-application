@@ -148,6 +148,7 @@ exports.searchEvents = catchAsync(async (req, res, next) => {
  * @desc    Get events by category
  * @route   GET /api/events/category/:category
  * @access  Public
+ * 
  */ 
 exports.getEventsByCategory = catchAsync(async (req, res, next) => {
     const { category } = req.params;

@@ -7,6 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 /**
  * @desc    Register new user
  * @route   POST /api/auth/signup
+ * @access
  */
 exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await authService.createUser({
@@ -35,6 +36,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 /**
  * @desc    Login user
  * @route   POST /api/auth/login
+ * @access  All
  */
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
@@ -63,6 +65,7 @@ exports.login = catchAsync(async (req, res, next) => {
 /**
  * @desc    Logout user
  * @route   GET /api/auth/logout
+ * @access  All
  */
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
@@ -109,6 +112,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 /**
  * @desc    Restrict access to specific roles
+ * @access  internal
  */
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {

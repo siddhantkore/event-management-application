@@ -11,10 +11,15 @@ const catchAsync = require('../utils/catchAsync')
 const sendSuccessResponse = require('../utils/sendSuccessResponse')
 const sendErrorResponse = require('../utils/sendErrorResponse')
 
-
-// @desc    Get current user profile
-// @route   GET /api/users/profile
-// @access  Private
+/**
+ * 
+ * @desc    Get current user profile
+ * @route   GET /api/users/profile
+ * @access  Private
+ * @param {string} id - User ID to retrieve
+ * @returns {object} - User profile data without password
+ * 
+ */
 const getProfile = catchAsync(async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -43,9 +48,18 @@ const getProfile = catchAsync(async (req, res) => {
   }
 });
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
+
+/**
+ * @desc    Update user profile
+ * @route   PUT /api/users/profile
+ * @access  Private
+ * @param {string} firstName - User's first name
+ * @param {string} lastName - User's lastName name
+ * @param {string} phone - User's Phone name
+ * @param {string} currentPassword - User's currentPassword
+ * @param {string} newPassword - User's newPassword
+ * 
+ */
 const updateProfile = catchAsync(async (req, res) => {
   try {
     const { firstName, lastName, phone, currentPassword, newPassword } = req.body;
@@ -112,9 +126,13 @@ const updateProfile = catchAsync(async (req, res) => {
   }
 });
 
-// @desc    Delete user account (self-deletion)
-// @route   DELETE /api/users/profile
-// @access  Private
+
+/**
+ * @desc    Delete user account (self-deletion)
+ * @route   DELETE /api/users/profile
+ * @access  Private
+ * @param {string} password - User's password for verification
+ */
 const deleteProfile = catchAsync(async (req, res) => {
   try {
     const { password } = req.body;
@@ -144,9 +162,16 @@ const deleteProfile = catchAsync(async (req, res) => {
   }
 });
 
-// @desc    Get all users (Admin only)
-// @route   GET /api/admin/users
-// @access  Private/Admin
+/**
+ * @desc    Get all users (Admin only)
+ * @route   GET /api/admin/users
+ * @access  Private/Admin
+ * @param {number} page - Page number for pagination
+ * @param {number} limit - Number of users per page
+ * @param {string} role - Filter by user role (optional)
+ * @param {boolean} isActive - Filter by active status (optional)
+ * @param {string} search - Search term for username, email, or name (optional)
+ */
 const getAllUsers = catchAsync(async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -207,10 +232,12 @@ const getAllUsers = catchAsync(async (req, res) => {
     sendErrorResponse(res, 500, 'Server error while retrieving users');
   }
 });
-
-// @desc    Get user by ID (Admin only)
-// @route   GET /api/admin/users/:id
-// @access  Private/Admin
+/**
+ * @desc    Get user by ID (Admin only)
+ * @route   GET /api/admin/users/:id
+ * @access  Private/Admin
+ * @param {string} id - User ID to retrieve
+ */
 const getUserById = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
@@ -245,9 +272,14 @@ const getUserById = catchAsync(async (req, res) => {
   }
 });
 
-// @desc    Update user status (Admin only)
-// @route   PATCH /api/admin/users/:id/status
-// @access  Private/Admin
+/**
+ * @desc    Update user status (Admin only)
+ * @route   PATCH /api/admin/users/:id/status
+ * @access  Private/Admin
+ * @param {string} id - User ID to update
+ * @param {boolean} isActive - New active status
+ * @param {string} role - New role (optional)
+ */
 const updateUserStatus = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
@@ -308,9 +340,12 @@ const updateUserStatus = catchAsync(async (req, res) => {
   }
 });
 
-// @desc    Delete user (Admin only)
-// @route   DELETE /api/admin/users/:id
-// @access  Private/Admin
+/**
+ * @desc    Delete user (Admin only)
+ * @route   DELETE /api/admin/users/:id
+ * @access  Private/Admin
+ * @param {string} id - User ID to delete
+ */
 const deleteUser = catchAsync(async (req, res) => {
   try {
     const { id } = req.params;
