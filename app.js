@@ -68,6 +68,7 @@ app.use('/api/registration',registrationRoute);
 app.use('/api/payments', paymentRoute);
 app.use('/api/reports', reportRoute);
 app.use('/api/analytics', analyticsRoute);
+app.use('/api/results', require('./routes/resultRoute'));
 
 app.use(globalErrorHandler);
 
