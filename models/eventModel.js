@@ -67,6 +67,11 @@ const eventSchema = new mongoose.Schema({
     trim: true,
     maxlength: [100, 'Organizer name cannot exceed 100 characters']
   },
+  organizerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: [true, 'Event must have an organizer ID']
+  },
   amount: {
     type: Number,
     min: [0, 'Amount cannot be negative'],

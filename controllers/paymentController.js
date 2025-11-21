@@ -1,5 +1,10 @@
-const PaymentService = require('../service/paymentService')
+const PaymentService = require('../service/paymentService');
+const Register = require('../models/registrationModel');
+const Payment = require('../models/paymentModel');
 const paymentService = new PaymentService();
+
+// Note: Coupon model is archived, so coupon functionality is disabled
+// const Coupon = require('../models/couponModel');
 
 class PaymentController {
   async initiatePayment(req, res) {
@@ -14,15 +19,16 @@ class PaymentController {
         return res.status(404).json({ error: 'Registration not found' });
       }
 
+      // Coupon functionality disabled (model archived)
       let coupon = null;
-      if (couponCode) {
-        coupon = await Coupon.findOne({ 
-          code: couponCode, 
-          isActive: true,
-          validFrom: { $lte: new Date() },
-          validUntil: { $gte: new Date() }
-        });
-      }
+      // if (couponCode) {
+      //   coupon = await Coupon.findOne({ 
+      //     code: couponCode, 
+      //     isActive: true,
+      //     validFrom: { $lte: new Date() },
+      //     validUntil: { $gte: new Date() }
+      //   });
+      // }
 
       const originalAmount = registration.eventId.amount;
       const discount = paymentService.calculateDiscount(originalAmount, coupon);
@@ -113,7 +119,7 @@ class PaymentController {
     try {
       const { page = 1, limit = 10, status, eventId } = req.query;
       
-      const filter = { userId: req.user._id };
+      const filter = { userId: req.user.id };
       if (status) filter.status = status;
       if (eventId) filter.eventId = eventId;
 

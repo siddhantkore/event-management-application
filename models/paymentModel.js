@@ -23,9 +23,59 @@ const paymentSchema = new mongoose.Schema({
     required: true
   },
   amount: {
-    type: Number,
-    required: true,
-    min: [0, 'Amount cannot be negative']
+    original: {
+      type: Number,
+      required: true,
+      min: [0, 'Amount cannot be negative']
+    },
+    discount: {
+      type: Number,
+      default: 0,
+      min: [0, 'Discount cannot be negative']
+    },
+    tax: {
+      type: Number,
+      default: 0,
+      min: [0, 'Tax cannot be negative']
+    },
+    final: {
+      type: Number,
+      required: true,
+      min: [0, 'Final amount cannot be negative']
+    }
+  },
+  status: {
+    type: String,
+    enum: ['PENDING', 'SUCCESS', 'FAILED', 'REFUNDED', 'CANCELLED'],
+    default: 'PENDING'
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['RAZORPAY', 'CASH', 'BANK_TRANSFER', 'OTHER'],
+    default: 'RAZORPAY'
+  },
+  paymentGateway: {
+    provider: {
+      type: String,
+      default: 'RAZORPAY'
+    },
+    orderId: String,
+    transactionId: String,
+    receiptId: String,
+    signature: String
+  },
+  paymentDate: {
+    type: Date
+  },
+  refund: {
+    refundId: String,
+    amount: Number,
+    reason: String,
+    refundDate: Date,
+    status: {
+      type: String,
+      enum: ['PROCESSING', 'COMPLETED', 'FAILED']
+    }
   },
   invoice: {
     invoiceNumber: String,

@@ -25,6 +25,12 @@ const authenticate = async (req, res, next) => {
 
 const authorize = (...roles) => {
   return (req, res, next) => {
+    // If no roles specified, allow all authenticated users
+    if (roles.length === 0) {
+      return next();
+    }
+    
+    // Check if user has one of the required roles
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ error: 'Access denied. Insufficient permissions.' });
     }
