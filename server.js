@@ -14,9 +14,10 @@ dotenv.config({ path: envFile });
 const app = require('./app');
 
 const PORT = process.env.PORT || 3000;
+const mongo_uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/EventApplicationDB"
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(mongo_uri)
   .then(() => {
     logger.info(`MongoDB Connected [${process.env.NODE_ENV}]`);
     app.listen(PORT, () => {

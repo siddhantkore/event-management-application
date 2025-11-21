@@ -1,6 +1,13 @@
 const AnalyticsService = require('../service/analyticsService');
 const analyticsService = new AnalyticsService();
 
+// aimed to control analytics related operations
+// event-specific analytics and overall platform analytics
+// how many events created, user sign-ups, revenue generated, registration trends
+// registrations for a specific event over time, user demographics, popular events
+
+
+
 class AnalyticsController {
   async getEventAnalytics(req, res) {
     try {
