@@ -22,16 +22,60 @@ const Register = require('../models/registrationModel')
  * 
  */
 exports.createRegistration = catchAsync(async (req, res, next) => {
+    const Event = require('../models/eventModel');
     const { eventDate, additionalInfo } = req.body;
-    const userId = req.user.id; // assuming auth middleware sets req.user
-    const eventId = req.params.id;
+    const userId = req.user.id;
+    const eventIdentifier = req.params.id; // Can be eventCode or eventId
 
-    const newRegistration = await Register.create({
-        eventId,
-        userId,
-        eventDate,
-        additionalInfo
+    // Find event by code or ID
+    let event;
+    if (eventIdentifier.match(/^[0-9a-fA-F]{24}$/)) {
+        // It's an ObjectId
+        event = await Event.findById(eventIdentifier);
+    } else {
+        // It's an event code
+        event = await Event.findOne({ eventCode: eventIdentifier.toUpperCase() });
+    }
+
+    if (!event) {
+        return next(new AppError('Event not found', 404));
+    }
+
+    // Check if event is full
+    if (event.isFull) {
+        return next(new AppError('Event is full. Registration closed.', 400));
+    }
+
+    // Check if user is already registered
+    const existingRegistration = await Register.findOne({ 
+        eventId: event._id, 
+        userId: userId 
     });
+
+    if (existingRegistration && existingRegistration.registrationStatus !== 'CANCELLED') {
+        return next(new AppError('You are already registered for this event', 400));
+    }
+
+    // Determine payment status based on event amount
+    const paymentStatus = event.amount > 0 ? 'PENDING' : 'FREE';
+
+    // Create registration
+    const newRegistration = await Register.create({
+        eventId: event._id,
+        userId,
+        eventDate: eventDate ? new Date(eventDate) : event.startDate,
+        additionalInfo: additionalInfo || {},
+        paymentStatus,
+        amountPaid: event.amount > 0 ? 0 : 0
+    });
+
+    // Update event current attendees count
+    event.currentAttendees = (event.currentAttendees || 0) + 1;
+    await event.save();
+
+    // Populate the registration for response
+    await newRegistration.populate('eventId', 'name eventCode startDate endDate venue');
+    await newRegistration.populate('userId', 'name username email');
 
     res.status(201).json({
         status: 'success',
@@ -113,20 +157,69 @@ exports.updateRegistration = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @desc    Get all registered user of a event
- * @route   GET /api/admin/events/registrations
- * @access  Private/Admin Only
+ * @desc    Get all registered users of an event
+ * @route   GET /api/registration/event/:eventId
+ * @access  Private (Event owner or Admin)
  * 
  */
 exports.getEventRegistrations = catchAsync(async (req, res, next) => {
-    const registrations = await Register.find({ eventId: req.params.id })
-        .populate('userId');
+    const registrations = await Register.find({ eventId: req.params.eventId })
+        .populate('userId', 'name username email phone')
+        .populate('eventId', 'name eventCode')
+        .select('-password')
+        .sort({ registrationDate: -1 });
 
     res.status(200).json({
         status: 'success',
         results: registrations.length,
         data: {
             registrations
+        }
+    });
+});
+
+/**
+ * @desc    Get all registrations (Admin only)
+ * @route   GET /api/admin/events/registrations
+ * @access  Private/Admin Only
+ * 
+ */
+exports.getAllRegistrations = catchAsync(async (req, res, next) => {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    // Build filter
+    const filter = {};
+    if (req.query.eventId) filter.eventId = req.query.eventId;
+    if (req.query.registrationStatus) filter.registrationStatus = req.query.registrationStatus;
+    if (req.query.paymentStatus) filter.paymentStatus = req.query.paymentStatus;
+
+    const [registrations, total] = await Promise.all([
+        Register.find(filter)
+            .populate('userId', 'name username email phone')
+            .populate('eventId', 'name eventCode category')
+            .select('-password')
+            .sort({ registrationDate: -1 })
+            .skip(skip)
+            .limit(limit),
+        Register.countDocuments(filter)
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+        status: 'success',
+        results: registrations.length,
+        data: {
+            registrations,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                total,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1
+            }
         }
     });
 });

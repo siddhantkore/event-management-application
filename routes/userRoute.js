@@ -1,5 +1,6 @@
 const express = require('express');
 const userController = require('../controllers/userController');
+const registrationController = require('../controllers/registerController');
 const authMiddleware = require('../middlewares/auth');
 const adminMiddleware = require('../middlewares/admin');
 
@@ -15,6 +16,9 @@ router.put('/profile', authMiddleware.authenticate,
 router.delete('/profile', authMiddleware.authenticate,
      authMiddleware.authorize, userController.deleteProfile);
 
+// User event registration route (must be before /:id route)
+router.post('/events/:id', authMiddleware.authenticate,
+     authMiddleware.authorize, registrationController.createRegistration);
 
 // Admin routes for user management
 router.get('/', authMiddleware.authenticate,

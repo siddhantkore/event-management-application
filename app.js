@@ -49,8 +49,8 @@ app.use(express.urlencoded({ extended: true }));
 // keep Admin Routes or admin access at different separate route
 
 // *** ADMIN ***
-
-
+const adminRoute = require('./routes/adminRoute');
+app.use('/api/admin', adminRoute);
 
 // *** USER ***
 
@@ -62,7 +62,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth',authRoute);
 app.use('/api/health', healthRoute);
 app.use('/api/events',eventRoute);
-app.use('api/user/profile',userRoute);
+app.use('/api/users',userRoute);
 app.use('/api/user/notifications',notificationRoute);
 app.use('/api/registration',registrationRoute);
 app.use('/api/payments', paymentRoute);
