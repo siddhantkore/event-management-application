@@ -8,7 +8,7 @@ const AppError = require('../utils/AppError');
 
 /**
  * @desc Getting all events with pagination
- * @route 
+ * @route /api/events/
  * @access All users with sign in as well as without
  * 
  */
@@ -79,22 +79,33 @@ exports.deleteEventByCode = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @desc
- * @route
- * @access
+ * @desc    Create a new event
+ * @route   POST /api/events
+ * @access  Public (or Protected later)
+ * 
  */
-
 exports.createEvent = catchAsync(async (req, res, next) => {
-    const newEvent = null // get event Doc from req;
-    const addedEvent = await Event.insertOne(newEvent);
+    console.log(req.body);
+  // 1. Get event data from request body
+  const newEvent = req.body;
 
-    if (!addedEvent)
-        throw new AppError("Cannot add the event");
+  // 2. Create event in database
+  const addedEvent = await Event.create(newEvent);
 
-    res.status(200).json({
-        status: "success"
-    });
+  // 3. Safety check (optional but good practice)
+  if (!addedEvent) {
+    return next(new AppError('Cannot add the event', 400));
+  }
+
+  // 4. Send response
+  res.status(201).json({
+    status: 'success',
+    data: {
+      event: addedEvent,
+    },
+  });
 });
+
 
 /**
  * @desc
@@ -107,7 +118,7 @@ exports.getFeaturedEvents = catchAsync(async (req, res, next) => {
 
     const events = await Event.find({ status: 'UPCOMING' })
         .sort({ startDate: 1 })
-        .limit(5);
+        .limit(25);
 
     res.status(200).json({
         status: 'success',
@@ -180,9 +191,9 @@ exports.uploadEventImage = catchAsync(async (req, res, next) => {
 }); */
 
 /**
- * @desc
- * @route
- * @access
+ * @desc    Get attendees of an event (to be implemented)
+ * @route   GET /api/events/:id/attendees
+ * @access  Private event owner
  * 
  */
 exports.getEventAttendees = catchAsync(async (req, res, next) => {
@@ -236,18 +247,4 @@ exports.updateEventByCode = catchAsync(async (req, res, next) => {
         }
     });
 
-});
-
-
-/**
- * @desc    Get attendees of an event (to be implemented)
- * @route   GET /api/events/:id/attendees
- * @access  Private event owner
- * 
- */
-exports.getEventAttendees = catchAsync(async (req, res, next) => {
-    res.status(200).json({
-        status: 'success',
-        data: []
-    });
 });
