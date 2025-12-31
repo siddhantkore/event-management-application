@@ -1,4 +1,14 @@
 node_modules
-env
+.env.production
+.env.development
 Data
+archieve
+logs
+kubernetes
+#cache
 
+
+to-do.txt
+arch.png
+
+.vscode
