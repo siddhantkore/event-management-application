@@ -1,3 +1,7 @@
+const Register = require('../models/registrationModel');
+const Payment = require('../models/paymentModel');
+const Result = require('../models/resultModel');
+
 class AnalyticsService {
   async getEventAnalytics(eventId, timeframe = '30d') {
     const endDate = new Date();
@@ -109,26 +113,38 @@ class AnalyticsService {
     const paidRegistrations = payments.length;
     const attendedUsers = registrations.filter(r => r.attendanceStatus === 'ATTENDED').length;
 
+    const calculatePercentage = (count, total) => {
+      return total > 0 ? parseFloat((count / total * 100).toFixed(2)) : 0;
+    };
+
     return {
       stages: [
         { name: 'Registered', count: totalRegistrations, percentage: 100 },
-        { name: 'Confirmed', count: confirmedRegistrations, percentage: (confirmedRegistrations / totalRegistrations * 100).toFixed(2) },
-        { name: 'Paid', count: paidRegistrations, percentage: (paidRegistrations / totalRegistrations * 100).toFixed(2) },
-        { name: 'Attended', count: attendedUsers, percentage: (attendedUsers / totalRegistrations * 100).toFixed(2) }
+        { name: 'Confirmed', count: confirmedRegistrations, percentage: calculatePercentage(confirmedRegistrations, totalRegistrations) },
+        { name: 'Paid', count: paidRegistrations, percentage: calculatePercentage(paidRegistrations, totalRegistrations) },
+        { name: 'Attended', count: attendedUsers, percentage: calculatePercentage(attendedUsers, totalRegistrations) }
       ]
     };
   }
 
   calculatePerformanceMetrics(registrations, payments, results) {
+    const totalRegistrations = registrations.length;
+    const totalPayments = payments.length;
+    const attendedCount = registrations.filter(r => r.attendanceStatus === 'ATTENDED').length;
+    const totalResults = results.length;
+    const completedResults = results.filter(r => r.tag !== 'PARTICIPANT').length;
+    const totalRevenue = payments.reduce((sum, p) => sum + (p.amount?.final || 0), 0);
+
     return {
-      registrationRate: registrations.length,
-      paymentConversionRate: registrations.length > 0 ? (payments.length / registrations.length * 100).toFixed(2) : 0,
-      attendanceRate: registrations.length > 0 ? 
-        (registrations.filter(r => r.attendanceStatus === 'ATTENDED').length / registrations.length * 100).toFixed(2) : 0,
-      averageRevenuePerRegistration: registrations.length > 0 ? 
-        (payments.reduce((sum, p) => sum + p.amount.final, 0) / registrations.length).toFixed(2) : 0,
-      completionRate: results.length > 0 ? 
-        (results.filter(r => r.tag !== 'PARTICIPANT').length / results.length * 100).toFixed(2) : 0
+      registrationRate: totalRegistrations,
+      paymentConversionRate: totalRegistrations > 0 ? 
+        parseFloat((totalPayments / totalRegistrations * 100).toFixed(2)) : 0,
+      attendanceRate: totalRegistrations > 0 ? 
+        parseFloat((attendedCount / totalRegistrations * 100).toFixed(2)) : 0,
+      averageRevenuePerRegistration: totalRegistrations > 0 ? 
+        parseFloat((totalRevenue / totalRegistrations).toFixed(2)) : 0,
+      completionRate: totalResults > 0 ? 
+        parseFloat((completedResults / totalResults * 100).toFixed(2)) : 0
     };
   }
 }

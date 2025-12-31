@@ -85,25 +85,57 @@ exports.deleteEventByCode = catchAsync(async (req, res, next) => {
  * 
  */
 exports.createEvent = catchAsync(async (req, res, next) => {
-    console.log(req.body);
-  // 1. Get event data from request body
-  const newEvent = req.body;
+    const {
+        name,
+        eventCode,
+        category,
+        time,
+        startDate,
+        endDate,
+        description,
+        organizer,
+        amount,
+        venue,
+        banner,
+        maxAttendees,
+        tags
+    } = req.body;
 
-  // 2. Create event in database
-  const addedEvent = await Event.create(newEvent);
+    // Validate required fields
+    if (!name || !eventCode || !category || !time || !startDate || !endDate || !description || !organizer || !venue) {
+        return next(new AppError('Missing required fields', 400));
+    }
 
-  // 3. Safety check (optional but good practice)
-  if (!addedEvent) {
-    return next(new AppError('Cannot add the event', 400));
-  }
+    // Check if event code already exists
+    const existingEvent = await Event.findOne({ eventCode: eventCode.toUpperCase() });
+    if (existingEvent) {
+        return next(new AppError('Event code already exists', 400));
+    }
 
-  // 4. Send response
-  res.status(201).json({
-    status: 'success',
-    data: {
-      event: addedEvent,
-    },
-  });
+    // Create new event
+    const newEvent = await Event.create({
+        name,
+        eventCode: eventCode.toUpperCase(),
+        category,
+        time,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        description,
+        organizer,
+        amount: amount || 0,
+        venue,
+        banner: banner || undefined,
+        maxAttendees: maxAttendees || undefined,
+        tags: tags || [],
+        organizerId: req.user.id // Track who created the event
+    });
+
+    res.status(201).json({
+        status: 'success',
+        data: {
+            event: newEvent
+        }
+    });
 });
 
 
@@ -191,32 +223,81 @@ exports.uploadEventImage = catchAsync(async (req, res, next) => {
 }); */
 
 /**
- * @desc    Get attendees of an event (to be implemented)
+ * @desc    Get attendees of an event
  * @route   GET /api/events/:id/attendees
- * @access  Private event owner
+ * @access  Private (Event owner or Admin)
  * 
  */
 exports.getEventAttendees = catchAsync(async (req, res, next) => {
+    const Register = require('../models/registrationModel');
+    const eventCode = req.params.id.toUpperCase();
+
+    const event = await Event.findOne({ eventCode });
+    if (!event) {
+        return next(new AppError(`No event found with code ${req.params.id}`, 404));
+    }
+
+    const registrations = await Register.find({ eventId: event._id })
+        .populate('userId', 'name username email phone')
+        .select('-password')
+        .sort({ registrationDate: -1 });
 
     res.status(200).json({
         status: 'success',
-        data: Data
-    })
-
+        results: registrations.length,
+        data: {
+            event: {
+                id: event._id,
+                name: event.name,
+                eventCode: event.eventCode
+            },
+            attendees: registrations.map(reg => ({
+                id: reg._id,
+                user: {
+                    id: reg.userId._id,
+                    name: reg.userId.name,
+                    username: reg.userId.username,
+                    email: reg.userId.email,
+                    phone: reg.userId.phone
+                },
+                registrationDate: reg.registrationDate,
+                registrationStatus: reg.registrationStatus,
+                paymentStatus: reg.paymentStatus,
+                attendanceStatus: reg.attendanceStatus
+            }))
+        }
+    });
 });
 
 /**
- * @desc Not configured Yet
- * @route 
- * @access
+ * @desc    Update event status
+ * @route   PUT /api/events/:id/status
+ * @access  Private (Event owner or Admin)
  */
 exports.updateEventStatus = catchAsync(async (req, res, next) => {
+    const { status } = req.body;
+    const eventCode = req.params.id.toUpperCase();
 
+    // Validate status
+    const validStatuses = ['ONGOING', 'UPCOMING', 'COMPLETED'];
+    if (!status || !validStatuses.includes(status.toUpperCase())) {
+        return next(new AppError(`Status must be one of: ${validStatuses.join(', ')}`, 400));
+    }
+
+    const event = await Event.findOne({ eventCode });
+    if (!event) {
+        return next(new AppError(`No event found with code ${req.params.id}`, 404));
+    }
+
+    event.status = status.toUpperCase();
+    await event.save();
 
     res.status(200).json({
         status: 'success',
-        data: Data
-    })
+        data: {
+            event
+        }
+    });
 });
 
 
@@ -248,3 +329,5 @@ exports.updateEventByCode = catchAsync(async (req, res, next) => {
     });
 
 });
+
+
